@@ -59,7 +59,8 @@ class MainActivity : AppCompatActivity() {
     fun tambahData (db: FirebaseFirestore, Provinsi : String, Ibukota : String) {
         val dataBaru = daftarProvinsi(Provinsi, Ibukota)
         db.collection("tbProvinsi")
-            .add(dataBaru)
+            .document(dataBaru.provinsi)
+            .set(dataBaru)
             .addOnSuccessListener {
                 _etProvinsi.setText("")
                 _etIbukota.setText("")
