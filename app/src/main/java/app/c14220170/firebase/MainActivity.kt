@@ -6,6 +6,7 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
+import android.widget.SimpleAdapter
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -18,11 +19,13 @@ class MainActivity : AppCompatActivity() {
     val db = Firebase.firestore
 
     var DataProvinsi = ArrayList<daftarProvinsi>()
-    lateinit var lvAdapter : ArrayAdapter<daftarProvinsi>
+    lateinit var lvAdapter : SimpleAdapter
 
     lateinit var _etProvinsi : EditText
     lateinit var _etIbukota : EditText
-    
+
+    var data: MutableList<Map<String, String>> = ArrayList()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -37,7 +40,13 @@ class MainActivity : AppCompatActivity() {
         val _btSimpan = findViewById<Button>(R.id.btSimpan)
         val _lvData = findViewById<ListView>(R.id.lvData)
 
-        lvAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, DataProvinsi)
+        lvAdapter = SimpleAdapter(
+            this,
+            data,
+            android.R.layout.simple_list_item_2,
+            arrayOf("Pro", "Ibu"),
+            intArrayOf(android.R.id.text1, android.R.id.text2)
+        )
         _lvData.adapter = lvAdapter
 
         _btSimpan.setOnClickListener {
@@ -73,6 +82,13 @@ class MainActivity : AppCompatActivity() {
                         document.data.get("ibukota").toString()
                     )
                     DataProvinsi.add(readData)
+                    data.clear()
+                    DataProvinsi.forEach {
+                        val dt: MutableMap<String, String> = HashMap(2)
+                        dt["Pro"] = it.provinsi
+                        dt["Ibu"] = it.ibukota
+                        data.add(dt)
+                    }
                 }
                 lvAdapter.notifyDataSetChanged()
             }
